@@ -3,11 +3,19 @@ import AttributesRow from './AttributesRow'
 import SkillsRow from './SkillsRow'
 import { useSelector } from 'react-redux'
 import ClassTab from './ClassTab'
+import { useEffect, useState } from 'react'
+import { getCharacterClasses } from '../../utils/utils'
 
 function CharacterCard({ id }) {
   const characters = useSelector((state) => state.characters.characters)
 
+  const [characterClasses, setCharacterClasses] = useState([])
+
   const characterData = characters[id]
+
+  useEffect(() => {
+    setCharacterClasses(getCharacterClasses(characterData))
+  }, [characterData])
 
   return (
     <div
@@ -24,15 +32,21 @@ function CharacterCard({ id }) {
               key={'id-' + idx}
               charId={id}
               attribute={attr}
-              value={characterData[attr]}
-              modifier={0}
+              value={characterData.attributes[attr].value}
+              modifier={characterData.attributes[attr].modifier}
             />
           )
         })}
       </div>
       <div className={'flex p-4 border-b-2 justify-evenly'}>
         {Object.entries(characterData.classes).map(([key, value], idx) => {
-          return <ClassTab key={'id-' + idx} label={key} active={value} />
+          return (
+            <ClassTab
+              key={'id-' + idx}
+              label={key}
+              active={characterClasses.includes(key)}
+            />
+          )
         })}
       </div>
       <div className={'flex flex-col pt-4'}>

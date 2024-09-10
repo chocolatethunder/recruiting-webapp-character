@@ -3,6 +3,7 @@ import SkillCheckResult from './components/SkillCheckResult'
 import CharacterCard from './components/Character/CharacterCard'
 import AddCharacterCard from './components/Character/AddCharacterCard'
 import { useSelector } from 'react-redux'
+import WarningModal from './components/WarningModal'
 
 function App() {
   const characters = useSelector((state) => state.characters.characters)
@@ -21,6 +22,7 @@ function App() {
           <AddCharacterCard />
         </div>
       </section>
+      <WarningModal />
     </div>
   )
 }
