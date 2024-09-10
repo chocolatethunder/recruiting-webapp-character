@@ -1,3 +1,6 @@
+export const SAVE_URL =
+  'https://recruiting.verylongdomaintotestwith.ca/api/{chocolatethunder}/character'
+
 export const DELEGATED_POINT_MAX = 70
 
 export const ATTRIBUTE_LIST = [

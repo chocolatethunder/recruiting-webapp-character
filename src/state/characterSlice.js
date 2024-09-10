@@ -1,46 +1,38 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from '../consts'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { SAVE_URL, SKILL_LIST } from '../consts'
 import {
+  generateNewCharacter,
   isCharacterLimitReached,
   isCharacterSkillReached,
 } from '../utils/utils'
 
-const getDependencies = (attribute) => {
-  const deps = []
-  SKILL_LIST.forEach((item) => {
-    if (item.attributeModifier === attribute) {
-      deps.push(item.name)
+export const fetchGameData = createAsyncThunk(
+  'gameData/getGameData',
+  async (arg, { rejectWithValue }) => {
+    const response = await fetch(SAVE_URL)
+    if (!response.ok) {
+      return rejectWithValue([], 'URL not found')
     }
-  })
-  return deps
-}
-
-const generateNewCharacter = () => {
-  return {
-    attributes: ATTRIBUTE_LIST.reduce((obj, item) => {
-      return {
-        ...obj,
-        [item]: {
-          value: 10,
-          modifier: 0,
-          dependencies: getDependencies(item),
-        },
-      }
-    }, {}),
-    classes: Object.keys(CLASS_LIST).reduce((obj, item) => {
-      return { ...obj, [item]: false }
-    }, {}),
-    skills: SKILL_LIST.reduce((obj, item) => {
-      return {
-        ...obj,
-        [item.name]: {
-          points: 0,
-          total: 0,
-          modifier: item.attributeModifier,
-        },
-      }
-    }, {}),
+    return response.json()
   }
+)
+
+const initialState = {
+  characters: [generateNewCharacter()],
+  skillCheck: {
+    character: 1,
+    skill: SKILL_LIST[0].name,
+    skillValue: 0,
+    rolled: 0,
+    dc: 0,
+    result: false,
+  },
+  ui: {
+    errors: {
+      maxCharacterAttributesReached: false,
+      maxSkillsPointsReached: false,
+    },
+  },
 }
 
 const incrementSkills = (state, charId, skillArray, attrModifier) => {
@@ -61,28 +53,11 @@ const decrementSkills = (state, charId, skillArray, attrModifier) => {
   })
 }
 
-const initialState = {
-  characters: [generateNewCharacter()],
-  skillCheck: {
-    character: 1,
-    skill: SKILL_LIST[0].name,
-    skillValue: 0,
-    rolled: 0,
-    dc: 0,
-    result: false,
-  },
-  ui: {
-    errors: {
-      maxCharacterAttributesReached: false,
-      maxSkillsPointsReached: false,
-    },
-  },
-}
-
 export const characterSlice = createSlice({
   name: 'characters',
   initialState,
   reducers: {
+    resetGame: () => initialState,
     addCharacter: (state) => {
       state.characters = [...state.characters, generateNewCharacter()]
     },
@@ -155,9 +130,15 @@ export const characterSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(fetchGameData.fulfilled, (state, action) => {
+      return { ...action.payload.body }
+    })
+  },
 })
 
 export const {
+  resetGame,
   addCharacter,
   incrementAttribute,
   decrementAttribute,

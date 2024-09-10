@@ -1,4 +1,9 @@
-import { ATTRIBUTE_LIST, CLASS_LIST, DELEGATED_POINT_MAX } from '../consts'
+import {
+  ATTRIBUTE_LIST,
+  CLASS_LIST,
+  DELEGATED_POINT_MAX,
+  SKILL_LIST,
+} from '../consts'
 
 export function isCharacterLimitReached(character) {
   return (
@@ -37,4 +42,42 @@ export function getCharacterClasses(character) {
 
 export function randomDiceRoller() {
   return Math.floor(Math.random() * 21)
+}
+
+export function getDependencies(attribute) {
+  const deps = []
+  SKILL_LIST.forEach((item) => {
+    if (item.attributeModifier === attribute) {
+      deps.push(item.name)
+    }
+  })
+  return deps
+}
+
+export function generateNewCharacter() {
+  return {
+    attributes: ATTRIBUTE_LIST.reduce((obj, item) => {
+      return {
+        ...obj,
+        [item]: {
+          value: 10,
+          modifier: 0,
+          dependencies: getDependencies(item),
+        },
+      }
+    }, {}),
+    classes: Object.keys(CLASS_LIST).reduce((obj, item) => {
+      return { ...obj, [item]: false }
+    }, {}),
+    skills: SKILL_LIST.reduce((obj, item) => {
+      return {
+        ...obj,
+        [item.name]: {
+          points: 0,
+          total: 0,
+          modifier: item.attributeModifier,
+        },
+      }
+    }, {}),
+  }
 }

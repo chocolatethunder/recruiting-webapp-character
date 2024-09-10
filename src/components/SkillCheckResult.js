@@ -1,12 +1,7 @@
 import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
 
 function SkillCheckResult() {
   const skillCheck = useSelector((state) => state.characters.skillCheck)
-
-  useEffect(() => {
-    console.log(skillCheck)
-  }, [skillCheck])
 
   return (
     <div

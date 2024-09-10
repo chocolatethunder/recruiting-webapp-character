@@ -30,7 +30,7 @@ function CharacterCard({ id }) {
         skillValue: characterData.skills[skillSelected].total,
         rolled: rolled,
         dc: dc,
-        result: dc > characterData.skills[skillSelected].total + rolled,
+        result: dc <= characterData.skills[skillSelected].total + rolled,
       })
     )
   }
