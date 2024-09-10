@@ -4,7 +4,6 @@ import CharacterCard from './components/Character/CharacterCard'
 import AddCharacterCard from './components/Character/AddCharacterCard'
 import { useDispatch, useSelector } from 'react-redux'
 import WarningModal from './components/WarningModal'
-import { useEffect } from 'react'
 import { fetchGameData, resetGame } from './state/characterSlice'
 import { SAVE_URL } from './consts'
 

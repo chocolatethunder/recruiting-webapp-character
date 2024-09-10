@@ -25,7 +25,7 @@ export function isCharacterSkillReached(character) {
 export function getCharacterClasses(character) {
   const classes = []
 
-  Object.keys(CLASS_LIST).map((className) => {
+  Object.keys(CLASS_LIST).forEach((className) => {
     const classTest =
       Object.entries(character.attributes)
         .map(([attribute, property]) => {
