@@ -63,6 +63,14 @@ const decrementSkills = (state, charId, skillArray, attrModifier) => {
 
 const initialState = {
   characters: [generateNewCharacter()],
+  skillCheck: {
+    character: 1,
+    skill: SKILL_LIST[0].name,
+    skillValue: 0,
+    rolled: 0,
+    dc: 0,
+    result: false,
+  },
   ui: {
     errors: {
       maxCharacterAttributesReached: false,
@@ -137,6 +145,9 @@ export const characterSlice = createSlice({
       state.characters[action.payload.id].classes[action.payload.class] =
         action.payload.active
     },
+    setSkillCheck: (state, action) => {
+      state.skillCheck = action.payload
+    },
     clearErrors: (state) => {
       state.ui.errors = {
         maxCharacterAttributesReached: false,
@@ -153,6 +164,7 @@ export const {
   incrementSkill,
   decrementSkill,
   setClassState,
+  setSkillCheck,
   clearErrors,
 } = characterSlice.actions
 

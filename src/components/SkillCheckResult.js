@@ -1,25 +1,43 @@
+import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+
 function SkillCheckResult() {
+  const skillCheck = useSelector((state) => state.characters.skillCheck)
+
+  useEffect(() => {
+    console.log(skillCheck)
+  }, [skillCheck])
+
   return (
     <div
-      className={'border border-amber-50 m-3 p-4 rounded-xl w-60 self-center'}
+      className={
+        'mx-3 bottom-0 bg-[#282c34] border border-amber-50 my-3 p-4 rounded-xl w-[400px]'
+      }
     >
-      <div className={'text-xl mt-1 mb-6 font-bold'}>Skill Check Results</div>
+      <div className={'text-xl mt-1 mb-2 font-bold'}>Skill Check Results</div>
+      <div className={'text-lg mt-1 mb-4 font-bold'}>
+        Character: {skillCheck.character}
+      </div>
       <div className={'flex flex-col'}>
         <div className={'flex flex-row'}>
-          <div className={'flex flex-grow'}>Skill: Animal Handling:</div>
-          <div className={'w-1/6 flex justify-end'}>6</div>
+          <div className={'flex flex-grow'}>Skill: {skillCheck.skill}:</div>
+          <div className={'w-1/6 flex justify-end'}>
+            {skillCheck.skillValue}
+          </div>
         </div>
         <div className={'flex'}>
           <div className={'flex flex-grow'}>You rolled:</div>
-          <div className={'w-1/6 flex justify-end'}>3</div>
+          <div className={'w-1/6 flex justify-end'}>{skillCheck.rolled}</div>
         </div>
         <div className={'flex'}>
           <div className={'flex flex-grow'}>The DC was:</div>
-          <div className={'w-1/6 flex justify-end'}>20</div>
+          <div className={'w-1/6 flex justify-end'}>{skillCheck.dc}</div>
         </div>
         <div className={'flex'}>
           <div className={'flex flex-grow'}>Result:</div>
-          <div className={'w-1/6 flex justify-end'}>Failure</div>
+          <div className={'w-1/6 flex justify-end'}>
+            {skillCheck.result ? 'Success' : 'Failure'}
+          </div>
         </div>
       </div>
     </div>

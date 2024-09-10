@@ -34,7 +34,7 @@ function WarningModal() {
             setIsVisible(false)
           }}
           className={
-            'fixed left-[50%] translate-x-[-50%] p-4 font-bold bottom-10 rounded-lg bg-amber-600 text-white cursor-pointer'
+            'fixed left-[50%] translate-x-[-50%] p-4 font-bold top-10 rounded-lg bg-amber-600 text-white cursor-pointer'
           }
         >
           {errorMessage}

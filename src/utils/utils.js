@@ -34,3 +34,7 @@ export function getCharacterClasses(character) {
   })
   return classes
 }
+
+export function randomDiceRoller() {
+  return Math.floor(Math.random() * 21)
+}
