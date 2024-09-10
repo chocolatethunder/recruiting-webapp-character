@@ -8,6 +8,15 @@ export function isCharacterLimitReached(character) {
   )
 }
 
+export function isCharacterSkillReached(character) {
+  return (
+    Object.values(character.skills).reduce((acc, property) => {
+      return acc + property.total
+    }, 0) >=
+    10 + 4 * character.attributes['Intelligence'].modifier
+  )
+}
+
 export function getCharacterClasses(character) {
   const classes = []
 

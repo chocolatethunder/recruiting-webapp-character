@@ -1,4 +1,4 @@
-import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from '../../consts'
+import { ATTRIBUTE_LIST, SKILL_LIST } from '../../consts'
 import AttributesRow from './AttributesRow'
 import SkillsRow from './SkillsRow'
 import { useSelector } from 'react-redux'
@@ -9,9 +9,9 @@ import { getCharacterClasses } from '../../utils/utils'
 function CharacterCard({ id }) {
   const characters = useSelector((state) => state.characters.characters)
 
-  const [characterClasses, setCharacterClasses] = useState([])
-
   const characterData = characters[id]
+
+  const [characterClasses, setCharacterClasses] = useState([])
 
   useEffect(() => {
     setCharacterClasses(getCharacterClasses(characterData))
@@ -20,7 +20,7 @@ function CharacterCard({ id }) {
   return (
     <div
       className={
-        'flex flex-col border border-amber-50 m-3 p-4 rounded-xl w-100'
+        'flex flex-col border border-amber-50 m-3 p-4 rounded-xl w-[600px]'
       }
     >
       <div className={'text-2xl mt-1 mb-2 font-bold'}>Character {id + 1}</div>
@@ -38,16 +38,21 @@ function CharacterCard({ id }) {
           )
         })}
       </div>
-      <div className={'flex p-4 border-b-2 justify-evenly'}>
+      <div className={'flex p-4 border-b-2 mb-3 justify-evenly'}>
         {Object.entries(characterData.classes).map(([key, value], idx) => {
           return (
             <ClassTab
               key={'id-' + idx}
+              charId={id}
               label={key}
               active={characterClasses.includes(key)}
             />
           )
         })}
+      </div>
+      <div>
+        Skill points available:{' '}
+        {10 + 4 * characterData.attributes['Intelligence'].modifier}
       </div>
       <div className={'flex flex-col pt-4'}>
         {SKILL_LIST.map((skill, idx) => {
@@ -56,8 +61,12 @@ function CharacterCard({ id }) {
               key={'id-' + idx}
               charId={id}
               skill={skill.name}
-              value={0}
-              attrModifier={skill.attributeModifier}
+              value={characterData.skills[skill.name].points}
+              total={characterData.skills[skill.name].total}
+              attrModifierLabel={skill.attributeModifier}
+              attrModifierValue={
+                characterData.attributes[skill.attributeModifier].modifier
+              }
             />
           )
         })}

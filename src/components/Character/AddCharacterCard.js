@@ -7,7 +7,7 @@ function AddCharacterCard() {
   return (
     <div
       className={
-        'flex flex-col border border-dashed border-amber-50 m-3 p-4 rounded-xl w-80 justify-center cursor-pointer'
+        'flex flex-col border border-dashed border-amber-50 m-3 p-4 rounded-xl w-[600px] justify-center cursor-pointer'
       }
       onClick={(e) => {
         e.preventDefault()

@@ -24,16 +24,16 @@ function AttributesRow({ charId, attribute, value, modifier }) {
         {modifier}
       </div>
       <button
-        onClick={incrementAttr}
+        onClick={decrementAttr}
         className={'w-[21px] h-[24px] p-0 ml-3 bg-amber-50 text-black'}
       >
-        +
+        -
       </button>
       <button
-        onClick={decrementAttr}
+        onClick={incrementAttr}
         className={'w-[21px] h-[24px] p-0 bg-amber-50 text-black'}
       >
-        -
+        +
       </button>
     </div>
   )

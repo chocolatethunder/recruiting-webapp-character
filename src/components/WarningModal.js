@@ -17,6 +17,12 @@ function WarningModal() {
       )
       setIsVisible(true)
     }
+    if (errors.maxSkillsPointsReached) {
+      setErrorMessage(
+        `You need more skill points! Upgrade Intelligence to get more`
+      )
+      setIsVisible(true)
+    }
   }, [errors])
 
   return (

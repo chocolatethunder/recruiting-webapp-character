@@ -1,6 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from '../consts'
-import { getCharacterClasses, isCharacterLimitReached } from '../utils/utils'
+import {
+  isCharacterLimitReached,
+  isCharacterSkillReached,
+} from '../utils/utils'
+
+const getDependencies = (attribute) => {
+  const deps = []
+  SKILL_LIST.forEach((item) => {
+    if (item.attributeModifier === attribute) {
+      deps.push(item.name)
+    }
+  })
+  return deps
+}
 
 const generateNewCharacter = () => {
   return {
@@ -10,13 +23,42 @@ const generateNewCharacter = () => {
         [item]: {
           value: 10,
           modifier: 0,
+          dependencies: getDependencies(item),
         },
       }
     }, {}),
     classes: Object.keys(CLASS_LIST).reduce((obj, item) => {
       return { ...obj, [item]: false }
     }, {}),
+    skills: SKILL_LIST.reduce((obj, item) => {
+      return {
+        ...obj,
+        [item.name]: {
+          points: 0,
+          total: 0,
+          modifier: item.attributeModifier,
+        },
+      }
+    }, {}),
   }
+}
+
+const incrementSkills = (state, charId, skillArray, attrModifier) => {
+  skillArray.forEach((skill) => {
+    state.characters[charId].skills[skill].points += 1
+    state.characters[charId].skills[skill].total =
+      state.characters[charId].skills[skill].points +
+      state.characters[charId].attributes[attrModifier].modifier
+  })
+}
+
+const decrementSkills = (state, charId, skillArray, attrModifier) => {
+  skillArray.forEach((skill) => {
+    state.characters[charId].skills[skill].points -= 1
+    state.characters[charId].skills[skill].total =
+      state.characters[charId].skills[skill].points +
+      state.characters[charId].attributes[attrModifier].modifier
+  })
 }
 
 const initialState = {
@@ -24,6 +66,7 @@ const initialState = {
   ui: {
     errors: {
       maxCharacterAttributesReached: false,
+      maxSkillsPointsReached: false,
     },
   },
 }
@@ -43,6 +86,12 @@ export const characterSlice = createSlice({
         state.characters[action.payload.id].attributes[
           action.payload.attr
         ].modifier += 1
+
+        // update skill dependencies
+        const deps =
+          state.characters[action.payload.id].attributes[action.payload.attr]
+            .dependencies
+        incrementSkills(state, action.payload.id, deps, action.payload.attr)
       } else {
         state.ui.errors.maxCharacterAttributesReached = true
       }
@@ -50,7 +99,7 @@ export const characterSlice = createSlice({
     decrementAttribute: (state, action) => {
       if (
         state.characters[action.payload.id].attributes[action.payload.attr]
-          .modifier > 0
+          .value > 0
       ) {
         state.characters[action.payload.id].attributes[
           action.payload.attr
@@ -58,7 +107,31 @@ export const characterSlice = createSlice({
         state.characters[action.payload.id].attributes[
           action.payload.attr
         ].modifier -= 1
+
+        // update skill dependencies
+        const deps =
+          state.characters[action.payload.id].attributes[action.payload.attr]
+            .dependencies
+        decrementSkills(state, action.payload.id, deps, action.payload.attr)
       }
+    },
+    incrementSkill: (state, action) => {
+      if (!isCharacterSkillReached(state.characters[action.payload.id])) {
+        const charId = action.payload.id
+        const skill = action.payload.skill
+        const attrModifier = state.characters[charId].skills[skill].modifier
+
+        incrementSkills(state, charId, [skill], attrModifier)
+      } else {
+        state.ui.errors.maxSkillsPointsReached = true
+      }
+    },
+    decrementSkill: (state, action) => {
+      const charId = action.payload.id
+      const skill = action.payload.skill
+      const attrModifier = state.characters[charId].skills[skill].modifier
+
+      decrementSkills(state, charId, [skill], attrModifier)
     },
     setClassState: (state, action) => {
       state.characters[action.payload.id].classes[action.payload.class] =
@@ -67,6 +140,7 @@ export const characterSlice = createSlice({
     clearErrors: (state) => {
       state.ui.errors = {
         maxCharacterAttributesReached: false,
+        maxSkillsPointsReached: false,
       }
     },
   },
@@ -76,6 +150,8 @@ export const {
   addCharacter,
   incrementAttribute,
   decrementAttribute,
+  incrementSkill,
+  decrementSkill,
   setClassState,
   clearErrors,
 } = characterSlice.actions
